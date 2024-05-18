@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Spiritual Kwadrantum</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: url('static/background.png') no-repeat center center fixed;
+            background-size: cover;
+            overflow-x: hidden;
+        }
+
+        h1, h2 {
+            color: #0056b3;
+        }
+
+        h1 {font-size: 30px; letter-spacing: 10px; }
+
+        h2 {font-size: 18px; letter-spacing: 10px;}
+
+        p {letter-spacing: 2px; line-height: 20px}
+
+        ul {letter-spacing: 2px; line-height: 20px; margin: 40px;}
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            text-align: center;
+            margin: 30px 20px;
+        }
+
+        .intro, .explanation {
+            margin-bottom: 20px;
+            text-align: left;
+            font-size: 12px;
+            color: #333;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .form-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="date"] {
+            padding: 5px;
+            margin-top: 5px;
+            width: 48%;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        form input[type="range"] {
+            width: 100%;
+            margin-top: 5px;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            align-self: center;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #graph {
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .side-by-side {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-top: 20px;
+        }
+
+        #annotations {
+            margin: 0;
+            text-align: left;
+            width: 300px;
+        }
+
+        #planetarium {
+            margin: 0;
+            position: relative;
+            width: 300px;
+            height: 300px;
+            border: 2px solid #333;
+            border-radius: 50%;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .planet {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: #ff0;
+            border: 1px solid #333;
+            border-radius: 50%;
+        }
+
+        .planet.sun { background-color: #ff0; }
+        .planet.moon { background-color: #ccc; }
+        .planet.mars { background-color: #f00; }
+        .planet.venus { background-color: #0f0; }
+        .planet.jupiter { background-color: #00f; }
+        
+        #contribution-graph {
+            width: 100%;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Spiritual Kwadrantum</h1>
+        <div class="intro">
+            <p>Welcome to the Spiritual Commons Calculator, an innovative application that brings together the worlds of numerology and astrology in a dynamic, data-driven, interactive experience. 
+                This application offers users the ability to explore their spiritual inter-connections and cosmic synergetic influences in a unique and visual way. It basically shows you how much influence is needed to get the planets perspectively in position. This project is a research project in anticipation of the launch of SoulMing.com, the spiritual API.
+            </p>
+        </div>        
+        <form id="form">
+            <div class="form-group">
+                <input type="text" id="name1" name="name1" placeholder="Jaap de Carpentier-Wolf" value="Jaap de Carpentier-Wolf">
+                <input type="date" id="birthdate1" name="birthdate1" value="1964-04-04">
+            </div>
+            <div class="form-group">
+                <input type="text" id="name2" name="name2" placeholder="Nadi Egbers" value="Nadi Egbers">
+                <input type="date" id="birthdate2" name="birthdate2" value="1988-07-31">
+            </div>
+            <div class="form-group">
+                <input type="text" id="name3" name="name3" placeholder="Frank Oonk" value="Frank Oonk">
+                <input type="date" id="birthdate3" name="birthdate3" value="1983-02-12">
+            </div>
+            <br/>
+            <label for="parameter1">Energetic Influence:</label>
+            <input type="range" id="parameter1" name="parameter1" min="0" max="100" value="50">
+            <label for="parameter2">Cosmic Harmony:</label>
+            <input type="range" id="parameter2" name="parameter2" min="0" max="100" value="50">
+            <label for="parameter3">Spirituality:</label>
+            <input type="range" id="parameter3" name="parameter3" min="0" max="100" value="50">
+            <label for="parameter4">Synergy:</label>
+            <input type="range" id="parameter4" name="parameter4" min="0" max="100" value="50">
+
+            <button type="button" onclick="updateGraph()">Update Chart</button>
+        </form>
+
+        <div id="graph"></div>
+        <div class="side-by-side">
+            <div id="planetarium">
+                <div class="planet sun" style="top: 140px; left: 140px;"></div>
+                <div class="planet moon" style="top: 40px; left: 140px;"></div>
+                <div class="planet mars" style="top: 140px; left: 240px;"></div>
+                <div class="planet venus" style="top: 240px; left: 140px;"></div>
+                <div class="planet jupiter" style="top: 140px; left: 40px;"></div>
+            </div>
+            <div id="annotations"></div>
+        </div>
+        <div id="contribution-graph"></div>
+        <br/>
+        <h2>How to Use the Application</h2>
+        <div class="explanation">
+            <p>
+                <strong>Enter Data:</strong><br>
+                Fill in the names and birthdates of the three individuals you want to analyze.
+            </p>
+            <p>
+                <strong>Adjust the Sliders:</strong><br>
+                <ul>
+                    <li><strong>Energetic Influence:</strong> This slider affects the intensity of the spiritual energy.</li>
+                    <li><strong>Cosmic Harmony:</strong> This slider influences the balance and harmony in the astrological data.</li>
+                    <li><strong>Spirituality:</strong> This slider determines the level of spiritual vibration and sensitivity.</li>
+                    <li><strong>Synergy:</strong> This slider reflects the degree of cooperation and overall harmony.</li>
+                </ul>
+            </p>
+            <p>
+                <strong>View the Visualization:</strong><br>
+                Click "Update Chart" to refresh the visualizations based on your input and slider settings. The chart displays volatile astrological data in relation to the numerological values and slider settings.
+            </p>
+            <p>
+                <strong>Explore the Atomic Quantum Planetarium:</strong><br>
+                As we all know, that universe is a complex system of perspective and time. Below the chart, you'll find the Atomic Quantum Planetarium that shows the positions of the planets in a circular arrangement in the perspective of the 3 stated individuals. The positions of the planets change dynamically based on your slider settings, providing a visual representation of the cosmic influences.
+                <ul>
+                    <li>Sun (yellow)</li>
+                    <li>Moon (white)</li>
+                    <li>Mars (red)</li>
+                    <li>Venus (blue)</li>
+                    <li>Jupiter (green)</li>
+                </ul>
+            </p>
+            <br/>
+            <h2>Why Use This Application?</h2>
+            <p>
+                This application is developed by Frank Oonk for anyone interested in the deeper spiritual and cosmic inter-connections between people. Whether you're a fan of astrology, numerology, or simply curious about the unseen forces that connect us, this application offers an engaging and interactive way to explore and visualize these forces. Try it out and discover the hidden spiritual dynamics between you and those around you!
+            </p>
+            <br/>
+            <h2>Spirit Nerds</h2>
+            <p>
+            The application is developed using Python 3.12 and the Flask web framework. It employs the Ephem library to obtain real-time planetary data, enabling precise tracking of celestial bodies. The energy levels are computed by analyzing the numerological birth dates of individuals, which are subsequently balanced through a complex algorithm that accounts for volatility and energy equilibrium factors. All birth dates are normalized against the server's timestamp to ensure temporal accuracy.
+            For data visualization, the application leverages Plotly, rendering dynamic charts that depict volatile astrological data in relation to numerological values. Additionally, the application features an Atomic Quantum Planetarium, which displays the positions of the planets in a circular configuration from the perspectives of the three specified individuals. This is achieved by integrating energy values and planetary angles, calculated using the mathematical constant π (Pi), providing a comprehensive visual representation of cosmic influences and spiritual dynamics. BTW HTML/CSS is a mess, i had to do it quick.
+            </p>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            const sliders = document.querySelectorAll('input[type="range"]');
+            sliders.forEach(slider => {
+                slider.addEventListener('input', updateGraph);
+            });
+
+            document.getElementById('form').addEventListener('input', updateGraph);
+
+            function updateGraph() {
+                const data = {
+                    name1: document.getElementById('name1').value,
+                    birthdate1: document.getElementById('birthdate1').value,
+                    name2: document.getElementById('name2').value,
+                    birthdate2: document.getElementById('birthdate2').value,
+                    name3: document.getElementById('name3').value,
+                    birthdate3: document.getElementById('birthdate3').value,
+                    parameter1: document.getElementById('parameter1').value,
+                    parameter2: document.getElementById('parameter2').value,
+                    parameter3: document.getElementById('parameter3').value,
+                    parameter4: document.getElementById('parameter4').value
+                };
+
+                $.ajax({
+                    url: '/update_graph',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: function(response) {
+                        const graphDiv = document.getElementById('graph');
+                        Plotly.react(graphDiv, JSON.parse(response.graphJSON));
+
+                        // Update annotations
+                        document.getElementById('annotations').innerHTML = `
+                            <p><strong>Intensity:</strong> ${response.intensity.toFixed(2)}</p>
+                            <p><strong>Love:</strong> ${response.love.toFixed(2)}</p>
+                            <p><strong>Relationship:</strong> ${response.relationship.toFixed(2)}</p>
+                            <p><strong>Synergy:</strong> ${response.synergy.toFixed(2)}</p>
+                        `;
+
+                        // Update planetarium positions based on the slider parameters
+                        updatePlanetarium(data.parameter1, data.parameter2, data.parameter3, data.parameter4);
+
+                        // Update contribution graph
+                        updateContributionGraph(data.name1, data.name2, data.name3, response.contributions);
+                    }
+                });
+            }
+
+            function updatePlanetarium(param1, param2, param3, param4) {
+                const planetarium = document.getElementById('planetarium');
+                const planets = planetarium.getElementsByClassName('planet');
+
+                for (let i = 0; i < planets.length; i++) {
+                    const angle = (i / planets.length) * 2 * Math.PI;
+                    const x = 140 + 100 * Math.cos(angle + ((param1/2+param3/2)) / 50 * Math.PI);
+                    const y = 140 + 100 * Math.sin(angle + ((param2/2+param4/2)) / 50 * Math.PI);
+                    planets[i].style.left = `${x}px`;
+                    planets[i].style.top = `${y}px`;
+                }
+            }
+
+            function updateContributionGraph(name1, name2, name3, contributions) {
+                const data = [
+                    {
+                        x: [name1, name2, name3],
+                        y: contributions.intensity,
+                        name: 'Intensity',
+                        type: 'bar'
+                    },
+                    {
+                        x: [name1, name2, name3],
+                        y: contributions.love,
+                        name: 'Love',
+                        type: 'bar'
+                    },
+                    {
+                        x: [name1, name2, name3],
+                        y: contributions.relationship,
+                        name: 'Relationship',
+                        type: 'bar'
+                    },
+                    {
+                        x: [name1, name2, name3],
+                        y: contributions.synergy,
+                        name: 'Synergy',
+                        type: 'bar'
+                    }
+                ];
+
+                const layout = {
+                    barmode: 'group',
+                    title: 'Individual Contributions to Annotations',
+                    xaxis: { title: 'Individuals' },
+                    yaxis: { title: 'Contribution Value' }
+                };
+
+                Plotly.react('contribution-graph', data, layout);
+            }
+
+            // Initial graph update
+            updateGraph();
+        });
+    </script>
+</body>
+</html>

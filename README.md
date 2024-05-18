@@ -1,2 +1,2 @@
 # kwadrantum
-A Spiritual Commons Calculator
+A Spiritual Commons Calculator.
